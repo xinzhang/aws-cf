@@ -1,0 +1,58 @@
+
+AWSTemplateFormatVersion: '2010-09-09'
+Metadata:
+  License: Apache-2.0
+Description: 'AWS CloudFormation Sample Template EC2InstanceWithSecurityGroupSample:
+  Create an Amazon EC2 instance running the Amazon Linux AMI. The AMI is chosen based
+  on the region in which the stack is run. This example creates an EC2 security group
+  for the instance to give you SSH access'
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+    Default: 'aws-wordpress-keypair'
+  InstanceType:
+    Description: WebServer EC2 instance type
+    Type: String
+    Default: t3a.micro
+    AllowedValues: [t2.nano, t2.micro, t2.small, t2.medium, 
+      t3.nano, t3.micro, t3.small, t3.medium, 
+      tsa.nano, t3a.micro, t3a.small, t3a.medium]
+    ConstraintDescription: must be a valid EC2 instance type.
+  LatestAmiId:
+    Type:  'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'    
+    # Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+    # Default: '/aws/service/aws-marketplace/bitnami-wordpress-5.4.2-0-linux-debian-10-x86_64-hvm-ebs'
+    Default: 'ami-0a9d86e605cb1cec8'
+  MyExistingSecurityGroup: 
+    Type: String
+    Default: 'sg-0f1c0cb29fc90ebd2'
+    Description: ID of an existing VPC security group (sg-xxxxxx)
+  SubnetId:
+    Type: String
+    Default: 'subnet-0e765871c38e62ab1'
+    Description: subnet ID of the default VPC
+Resources:
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      #ImageId: !FindInMap [ AWSRegionArch2AMI, !Ref 'AWS::Region' , !FindInMap [ AWSInstanceType2Arch, !Ref InstanceType, Arch ] ]
+      ImageId: !Ref 'LatestAmiId'
+      KeyName: !Ref KeyName
+      InstanceType: !Ref InstanceType
+      SecurityGroupIds: [!Ref 'MyExistingSecurityGroup']
+      SubnetId: !Ref SubnetId
+Outputs:
+  InstanceId:
+    Description: InstanceId of the newly created EC2 instance
+    Value: !Ref 'EC2Instance'
+  AZ:
+    Description: Availability Zone of the newly created EC2 instance
+    Value: !GetAtt [EC2Instance, AvailabilityZone]
+  PublicDNS:
+    Description: Public DNSName of the newly created EC2 instance
+    Value: !GetAtt [EC2Instance, PublicDnsName]
+  PublicIP:
+    Description: Public IP address of the newly created EC2 instance
+    Value: !GetAtt [EC2Instance, PublicIp]
