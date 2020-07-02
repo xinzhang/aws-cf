@@ -38,7 +38,8 @@ Resources:
     Type: AWS::EC2::Instance
     Properties:
       #ImageId: !FindInMap [ AWSRegionArch2AMI, !Ref 'AWS::Region' , !FindInMap [ AWSInstanceType2Arch, !Ref InstanceType, Arch ] ]
-      ImageId: !Ref 'LatestAmiId'
+      # ImageId: !Ref 'LatestAmiId'
+      ImageId: 'ami-0f989d53d3f4ee9da'
       KeyName: !Ref KeyName
       InstanceType: !Ref InstanceType
       SecurityGroupIds: [!Ref 'MyExistingSecurityGroup']
