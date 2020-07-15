@@ -21,9 +21,10 @@ Parameters:
       tsa.nano, t3a.micro, t3a.small, t3a.medium]
     ConstraintDescription: must be a valid EC2 instance type.
   LatestAmiId:
-    Type:  'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'    
+    # Type:  'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
     # Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
     # Default: '/aws/service/aws-marketplace/bitnami-wordpress-5.4.2-0-linux-debian-10-x86_64-hvm-ebs'
+    Type: String
     Default: 'ami-0a9d86e605cb1cec8'
   MyExistingSecurityGroup: 
     Type: String
@@ -39,7 +40,7 @@ Resources:
     Properties:
       #ImageId: !FindInMap [ AWSRegionArch2AMI, !Ref 'AWS::Region' , !FindInMap [ AWSInstanceType2Arch, !Ref InstanceType, Arch ] ]
       # ImageId: !Ref 'LatestAmiId'
-      ImageId: 'ami-0f989d53d3f4ee9da'
+      ImageId: !Ref LatestAmiId
       KeyName: !Ref KeyName
       InstanceType: !Ref InstanceType
       SecurityGroupIds: [!Ref 'MyExistingSecurityGroup']
